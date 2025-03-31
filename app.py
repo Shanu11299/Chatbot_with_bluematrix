@@ -10,13 +10,13 @@ if not os.path.exists(nltk_data_path):
     os.makedirs(nltk_data_path)
 
 # Set the NLTK data path
-nltk.data.path.append(nltk_data_path)
+nltk.data.path.append('/tmp/nltk_data')
 
 # Manually check and download 'punkt' tokenizer
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt', download_dir=nltk_data_path)
+    nltk.download('punkt', download_dir='/tmp/nltk_data')
 
 # App title
 st.set_page_config(page_title="🦙💬 Llama Newly 2 Chatbot")
