@@ -1,7 +1,7 @@
 import streamlit as st
 import replicate
-import os
 import nltk
+import os
 from nltk.translate.bleu_score import sentence_bleu
 
 # Ensure NLTK data directory exists
@@ -10,13 +10,15 @@ if not os.path.exists(nltk_data_path):
     os.makedirs(nltk_data_path)
 
 # Set the NLTK data path
-nltk.data.path.append('/tmp/nltk_data')
+NLTK_PATH = "/tmp/nltk_data"
+os.makedirs(NLTK_PATH, exist_ok=True)
+nltk.data.path.append(NLTK_PATH)
 
 # Manually check and download 'punkt' tokenizer
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt', download_dir='/tmp/nltk_data')
+    nltk.download('punkt', download_dir=NLTK_PATH)
 
 # App title
 st.set_page_config(page_title="🦙💬 Llama Newly 2 Chatbot")
