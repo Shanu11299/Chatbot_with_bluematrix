@@ -5,7 +5,7 @@ import os
 from nltk.translate.bleu_score import sentence_bleu
 
 # Ensure NLTK data directory exists
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
+nltk_data_path = os.path..expanduser(os.getcwd(), "nltk_data")
 if not os.path.exists(nltk_data_path):
     os.makedirs(nltk_data_path)
 
