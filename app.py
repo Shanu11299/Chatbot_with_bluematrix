@@ -5,9 +5,10 @@ import os
 from nltk.translate.bleu_score import sentence_bleu
 
 # Ensure NLTK data directory exists
-nltk_data_path = os.path..expanduser(os.getcwd(), "nltk_data")
-if not os.path.exists(nltk_data_path):
-    os.makedirs(nltk_data_path)
+nltk_data_path = os.path..expanduser("~/nltk_data")
+os.makedirs(nltk_data_path, exist_ok=True)
+nltk.data.path.append(nltk_data_path)
+
 
 # Set the NLTK data path
 NLTK_PATH = "/tmp/nltk_data"
@@ -18,7 +19,7 @@ nltk.data.path.append(NLTK_PATH)
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt', download_dir=NLTK_PATH)
+    nltk.download('punkt', download_dir=nltk_data_path)
 
 # App title
 st.set_page_config(page_title="🦙💬 Llama Newly 2 Chatbot")
