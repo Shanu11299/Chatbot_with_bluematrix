@@ -5,10 +5,9 @@ import os
 from nltk.translate.bleu_score import sentence_bleu
 
 
-
 # Ensure NLTK data directory exists
-os.environ['NLTK_DATA'] = os.path.expanduser("~/nltk_data")
-nltk.download('punkt', download_dir=os.environ['NLTK_DATA'])
+nltk_data_path = os.path.expanduser("~/nltk_data")
+os.makedirs(nltk_data_path, exist_ok=True)
 nltk.data.path.append(nltk_data_path)
 
 
