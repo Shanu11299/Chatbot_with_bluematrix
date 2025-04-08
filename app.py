@@ -4,23 +4,9 @@ import nltk
 import os
 from nltk.translate.bleu_score import sentence_bleu
 
-
-# Ensure NLTK data directory exists
-nltk_data_path = os.path.expanduser("~/nltk_data")
-os.makedirs(nltk_data_path, exist_ok=True)
-nltk.data.path.append(nltk_data_path)
-
-
-# Set the NLTK data path
-NLTK_PATH = "/tmp/nltk_data"
-os.makedirs(NLTK_PATH, exist_ok=True)
-nltk.data.path.append(NLTK_PATH)
-
-# Manually check and download 'punkt' tokenizer
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt', download_dir=nltk_data_path)
+# Set up NLTK to use local tokenizer files (no download needed)
+nltk_data_local = os.path.join(os.path.dirname(__file__), "nltk_data")
+nltk.data.path.append(nltk_data_local)
 
 # App title
 st.set_page_config(page_title="🦙💬 Llama Newly 2 Chatbot")
@@ -74,36 +60,39 @@ def generate_llama2_response(prompt_input):
             string_dialogue += "Assistant: " + dict_message["content"] + "\n\n"
     
     # Get response from LLaMA2
-    output = replicate.run(llm, input={"prompt": f"{string_dialogue} {prompt_input} Assistant: ",
-                                      "temperature": temperature, "top_p": top_p, "max_length": max_length, "repetition_penalty": 1})
-    generated_response = " ".join(output)  # Convert output to string
-    
-    # Example Reference Response (Modify this based on expected responses)
-    reference_response = [["Hello", "how", "may", "I", "help", "you"], 
+    output = replicate.run(llm, input={
+        "prompt": f"{string_dialogue} {prompt_input} Assistant: ",
+        "temperature": temperature,
+        "top_p": top_p,
+        "max_length": max_length,
+        "repetition_penalty": 1
+    })
+    generated_response = " ".join(output)
+
+    # Reference response (example - update based on your needs)
+    reference_response = [["Hello", "how", "may", "I", "help", "you"],
                           ["Can", "I", "assist", "you", "with", "something"]]
 
-    # Tokenize both the generated response and the reference response
+    # Tokenize and calculate BLEU
     generated_tokens = nltk.word_tokenize(generated_response)
-
-    # Compute BLEU score
     bleu_score = sentence_bleu(reference_response, generated_tokens)
 
     return generated_response, bleu_score
 
-# User-provided prompt
+# User prompt input
 if prompt := st.chat_input(disabled=not replicate_api):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
 
-# Generate a new response if last message is not from assistant
+# Generate assistant response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response, bleu_score = generate_llama2_response(prompt)
             placeholder = st.empty()
             placeholder.markdown(f"**Response:** {response}")
-            st.sidebar.write(f"🔹 **BLEU Score:** {bleu_score:.4f}")  # Display BLEU score in sidebar
+            st.sidebar.write(f"🔹 **BLEU Score:** {bleu_score:.4f}")
 
     message = {"role": "assistant", "content": response}
     st.session_state.messages.append(message)
